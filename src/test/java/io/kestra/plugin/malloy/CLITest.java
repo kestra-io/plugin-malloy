@@ -1,4 +1,4 @@
-package io.kestra.plugin.scripts.malloy;
+package io.kestra.plugin.malloy;
 
 import com.google.common.collect.ImmutableMap;
 import io.kestra.core.models.executions.LogEntry;
@@ -12,11 +12,8 @@ import io.kestra.plugin.scripts.exec.scripts.models.ScriptOutput;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Test;
 
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 

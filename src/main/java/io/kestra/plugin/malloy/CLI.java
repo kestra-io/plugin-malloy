@@ -1,4 +1,4 @@
-package io.kestra.plugin.scripts.malloy;
+package io.kestra.plugin.malloy;
 
 import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
