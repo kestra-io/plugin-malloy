@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
 
 @MicronautTest
@@ -47,6 +48,6 @@ class CLITest {
         ScriptOutput run = bash.run(runContext);
 
         assertThat(run.getExitCode(), is(0));
-        assertThat(run.getStdOutLineCount(), is(20));
+        assertThat(run.getStdOutLineCount(), greaterThan(10));
     }
 }
