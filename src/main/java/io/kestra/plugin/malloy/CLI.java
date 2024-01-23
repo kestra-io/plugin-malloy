@@ -27,13 +27,12 @@ import java.util.List;
 @Plugin(examples = {
     @Example(
         full = true,
-        title = "Create a malloy script and run the malloy-cli run command",
+        title = "Create a Malloy script and run the malloy-cli run command.",
         code = """
                id: malloy
                namespace: dev
                
                tasks:
-               
                  - id: working_dir
                    type: io.kestra.core.tasks.flows.WorkingDirectory
                    tasks:
@@ -41,7 +40,7 @@ import java.util.List;
                        type: io.kestra.core.tasks.storages.LocalFiles
                        inputs:
                          model.malloy: |
-                           source: my_model is table('duckdb:https://raw.githubusercontent.com/kestra-io/datasets/main/csv/Iris.csv')
+                           source: my_model is duckdb.table('https://raw.githubusercontent.com/kestra-io/datasets/main/csv/Iris.csv')
                
                            run: my_model -> {
                                group_by: variety
@@ -53,7 +52,7 @@ import java.util.List;
                            }
                
                      - id: run_malloy
-                       type: io.kestra.plugin.scripts.malloy.CLI
+                       type: io.kestra.plugin.malloy.CLI
                        commands:
                          - malloy-cli run model.malloy
                 """
@@ -61,7 +60,7 @@ import java.util.List;
 })
 public class CLI extends AbstractExecScript {
     @Schema(
-        title = "Docker options when using the `DOCKER` runner"
+        title = "Docker options when using the `DOCKER` runner."
     )
     @PluginProperty
     @Builder.Default
@@ -70,7 +69,7 @@ public class CLI extends AbstractExecScript {
         .build();
 
     @Schema(
-        title = "The commands to run"
+        title = "The commands to run."
     )
     @PluginProperty(dynamic = true)
     protected List<String> commands;
