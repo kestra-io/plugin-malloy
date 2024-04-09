@@ -59,13 +59,16 @@ import java.util.List;
     )
 })
 public class CLI extends AbstractExecScript {
+
+    private static final String DEFAULT_IMAGE = "ghcr.io/kestra-io/malloy";
+
     @Schema(
         title = "Docker options when using the `DOCKER` runner."
     )
     @PluginProperty
     @Builder.Default
     protected DockerOptions docker = DockerOptions.builder()
-        .image("ghcr.io/kestra-io/malloy")
+        .image(DEFAULT_IMAGE)
         .build();
 
     @Schema(
@@ -74,11 +77,14 @@ public class CLI extends AbstractExecScript {
     @PluginProperty(dynamic = true)
     protected List<String> commands;
 
+    @Builder.Default
+    protected String containerImage = DEFAULT_IMAGE;
+
     @Override
     public ScriptOutput run(RunContext runContext) throws Exception {
         List<String> commandsArgs = ScriptService.scriptCommands(
             this.interpreter,
-            this.beforeCommands,
+            this.getBeforeCommandsWithOptions(),
             this.commands
         );
 
