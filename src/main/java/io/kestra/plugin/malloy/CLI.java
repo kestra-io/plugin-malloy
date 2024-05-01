@@ -40,7 +40,7 @@ import java.util.List;
                        type: io.kestra.core.tasks.storages.LocalFiles
                        inputs:
                          model.malloy: |
-                           source: my_model is duckdb.table('https://raw.githubusercontent.com/kestra-io/datasets/main/csv/Iris.csv')
+                           source: my_model is duckdb.table('https://huggingface.co/datasets/kestra/datasets/raw/main/csv/iris.csv')
                
                            run: my_model -> {
                                group_by: variety
