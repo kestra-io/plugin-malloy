@@ -34,10 +34,10 @@ import java.util.List;
                
                tasks:
                  - id: working_dir
-                   type: io.kestra.core.tasks.flows.WorkingDirectory
+                   type: io.kestra.plugin.core.flow.WorkingDirectory
                    tasks:
                      - id: local_file
-                       type: io.kestra.core.tasks.storages.LocalFiles
+                       type: io.kestra.plugin.core.storage.LocalFiles
                        inputs:
                          model.malloy: |
                            source: my_model is duckdb.table('https://huggingface.co/datasets/kestra/datasets/raw/main/csv/iris.csv')
