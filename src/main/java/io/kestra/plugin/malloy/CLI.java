@@ -8,8 +8,6 @@ import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.scripts.exec.AbstractExecScript;
 import io.kestra.plugin.scripts.exec.scripts.models.DockerOptions;
 import io.kestra.plugin.scripts.exec.scripts.models.ScriptOutput;
-import io.kestra.plugin.scripts.exec.scripts.runners.AbstractLogConsumer;
-import io.kestra.plugin.scripts.exec.scripts.runners.CommandsWrapper;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
