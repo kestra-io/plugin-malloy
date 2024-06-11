@@ -61,15 +61,6 @@ public class CLI extends AbstractExecScript {
     private static final String DEFAULT_IMAGE = "ghcr.io/kestra-io/malloy";
 
     @Schema(
-        title = "Docker options when using the `DOCKER` runner."
-    )
-    @PluginProperty
-    @Builder.Default
-    protected DockerOptions docker = DockerOptions.builder()
-        .image(DEFAULT_IMAGE)
-        .build();
-
-    @Schema(
         title = "The commands to run."
     )
     @PluginProperty(dynamic = true)
