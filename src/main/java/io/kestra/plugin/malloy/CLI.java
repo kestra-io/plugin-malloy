@@ -31,29 +31,23 @@ import java.util.List;
                namespace: dev
                
                tasks:
-                 - id: working_dir
-                   type: io.kestra.plugin.core.flow.WorkingDirectory
-                   tasks:
-                     - id: local_file
-                       type: io.kestra.plugin.core.storage.LocalFiles
-                       inputs:
-                         model.malloy: |
-                           source: my_model is duckdb.table('https://huggingface.co/datasets/kestra/datasets/raw/main/csv/iris.csv')
-               
-                           run: my_model -> {
-                               group_by: variety
-                               aggregate:
-                                   avg_petal_width is avg(petal_width)
-                                   avg_petal_length is avg(petal_length)
-                                   avg_sepal_width is avg(sepal_width)
-                                   avg_sepal_length is avg(sepal_length)
-                           }
-               
-                     - id: run_malloy
-                       type: io.kestra.plugin.malloy.CLI
-                       commands:
-                         - malloy-cli run model.malloy
-                """
+                 - id: run_malloy
+                   type: io.kestra.plugin.malloy.CLI
+                   inputFiles:
+                     model.malloy: |
+                       source: my_model is duckdb.table('https://huggingface.co/datasets/kestra/datasets/raw/main/csv/iris.csv')
+                
+                       run: my_model -> {
+                           group_by: variety
+                           aggregate:
+                               avg_petal_width is avg(petal_width)
+                               avg_petal_length is avg(petal_length)
+                               avg_sepal_width is avg(sepal_width)
+                               avg_sepal_length is avg(sepal_length)
+                       }
+                   commands:
+                     - malloy-cli run model.malloy
+               """
     )
 })
 public class CLI extends AbstractExecScript {
