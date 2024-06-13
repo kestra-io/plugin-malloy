@@ -35,9 +35,6 @@ class CLITest {
 
     @Test
     void task() throws Exception {
-        List<LogEntry> logs = new ArrayList<>();
-        logQueue.receive(l -> logs.add(l.getLeft()));
-
         CLI bash = CLI.builder()
             .id("unit-test")
             .type(CLI.class.getName())
