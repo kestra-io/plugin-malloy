@@ -28,7 +28,7 @@ import java.util.List;
         title = "Create a Malloy script and run the malloy-cli run command.",
         code = """
                id: malloy
-               namespace: dev
+               namespace: company.team
                
                tasks:
                  - id: run_malloy
