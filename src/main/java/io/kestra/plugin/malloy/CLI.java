@@ -4,11 +4,13 @@ import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.models.annotations.PluginProperty;
 import io.kestra.core.models.tasks.runners.ScriptService;
+import io.kestra.core.models.tasks.runners.TaskRunner;
 import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.scripts.exec.AbstractExecScript;
-import io.kestra.plugin.scripts.exec.scripts.models.DockerOptions;
 import io.kestra.plugin.scripts.exec.scripts.models.ScriptOutput;
+import io.kestra.plugin.scripts.runner.docker.Docker;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -60,8 +62,19 @@ public class CLI extends AbstractExecScript {
     @PluginProperty(dynamic = true)
     protected List<String> commands;
 
+    @Schema(
+        title = "The task runner to use.",
+        description = "Task runners are provided by plugins, each have their own properties."
+    )
+    @PluginProperty
     @Builder.Default
-    protected String containerImage = DEFAULT_IMAGE;
+    @Valid
+    private TaskRunner taskRunner = Docker.INSTANCE;
+
+    @Schema(title = "The task runner container image, only used if the task runner is container-based.")
+    @PluginProperty(dynamic = true)
+    @Builder.Default
+    private String containerImage = DEFAULT_IMAGE;
 
     @Override
     public ScriptOutput run(RunContext runContext) throws Exception {
@@ -72,6 +85,8 @@ public class CLI extends AbstractExecScript {
         );
 
         return this.commands(runContext)
+            .withTaskRunner(this.taskRunner)
+            .withContainerImage(this.containerImage)
             .withCommands(commandsArgs)
             .run();
     }
