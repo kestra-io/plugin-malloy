@@ -7,6 +7,7 @@ import io.kestra.core.models.tasks.runners.ScriptService;
 import io.kestra.core.models.tasks.runners.TaskRunner;
 import io.kestra.core.runners.RunContext;
 import io.kestra.plugin.scripts.exec.AbstractExecScript;
+import io.kestra.plugin.scripts.exec.scripts.models.DockerOptions;
 import io.kestra.plugin.scripts.exec.scripts.models.ScriptOutput;
 import io.kestra.plugin.scripts.runner.docker.Docker;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -75,6 +76,16 @@ public class CLI extends AbstractExecScript {
     @PluginProperty(dynamic = true)
     @Builder.Default
     private String containerImage = DEFAULT_IMAGE;
+
+    @Override
+    protected DockerOptions injectDefaults(DockerOptions original) {
+        var builder = original.toBuilder();
+        if (original.getImage() == null) {
+            builder.image(this.getContainerImage());
+        }
+
+        return builder.build();
+    }
 
     @Override
     public ScriptOutput run(RunContext runContext) throws Exception {
