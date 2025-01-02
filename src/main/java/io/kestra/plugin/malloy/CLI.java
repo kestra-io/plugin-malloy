@@ -1,8 +1,10 @@
 package io.kestra.plugin.malloy;
 
+import io.kestra.core.exceptions.IllegalVariableEvaluationException;
 import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.models.annotations.PluginProperty;
+import io.kestra.core.models.property.Property;
 import io.kestra.core.models.tasks.runners.ScriptService;
 import io.kestra.core.models.tasks.runners.TaskRunner;
 import io.kestra.core.runners.RunContext;
@@ -32,14 +34,14 @@ import java.util.List;
         code = """
                id: malloy
                namespace: company.team
-               
+
                tasks:
                  - id: run_malloy
                    type: io.kestra.plugin.malloy.CLI
                    inputFiles:
                      model.malloy: |
                        source: my_model is duckdb.table('https://huggingface.co/datasets/kestra/datasets/raw/main/csv/iris.csv')
-                
+
                        run: my_model -> {
                            group_by: variety
                            aggregate:
@@ -73,15 +75,14 @@ public class CLI extends AbstractExecScript {
     private TaskRunner taskRunner = Docker.instance();
 
     @Schema(title = "The task runner container image, only used if the task runner is container-based.")
-    @PluginProperty(dynamic = true)
     @Builder.Default
-    private String containerImage = DEFAULT_IMAGE;
+    private Property<String> containerImage = Property.of(DEFAULT_IMAGE);
 
     @Override
     protected DockerOptions injectDefaults(DockerOptions original) {
         var builder = original.toBuilder();
         if (original.getImage() == null) {
-            builder.image(this.getContainerImage());
+            builder.image(this.getContainerImage().toString());
         }
 
         return builder.build();
@@ -91,13 +92,13 @@ public class CLI extends AbstractExecScript {
     public ScriptOutput run(RunContext runContext) throws Exception {
         List<String> commandsArgs = ScriptService.scriptCommands(
             this.interpreter,
-            this.getBeforeCommandsWithOptions(),
+            this.getBeforeCommandsWithOptions(runContext),
             this.commands
         );
 
         return this.commands(runContext)
             .withTaskRunner(this.taskRunner)
-            .withContainerImage(this.containerImage)
+            .withContainerImage(runContext.render(this.containerImage).as(String.class).orElseThrow())
             .withCommands(commandsArgs)
             .run();
     }
