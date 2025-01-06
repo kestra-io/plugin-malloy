@@ -1,6 +1,5 @@
 package io.kestra.plugin.malloy;
 
-import io.kestra.core.exceptions.IllegalVariableEvaluationException;
 import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
 import io.kestra.core.models.annotations.PluginProperty;
@@ -72,7 +71,7 @@ public class CLI extends AbstractExecScript {
     @PluginProperty
     @Builder.Default
     @Valid
-    private TaskRunner taskRunner = Docker.instance();
+    private TaskRunner<?> taskRunner = Docker.instance();
 
     @Schema(title = "The task runner container image, only used if the task runner is container-based.")
     @Builder.Default
