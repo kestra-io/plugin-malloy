@@ -61,8 +61,7 @@ public class CLI extends AbstractExecScript {
     @Schema(
         title = "The commands to run."
     )
-    @PluginProperty(dynamic = true)
-    protected List<String> commands;
+    protected Property<List<String>> commands;
 
     @Schema(
         title = "The task runner to use.",
@@ -90,9 +89,9 @@ public class CLI extends AbstractExecScript {
     @Override
     public ScriptOutput run(RunContext runContext) throws Exception {
         List<String> commandsArgs = ScriptService.scriptCommands(
-            this.interpreter,
+            runContext.render(this.interpreter).asList(String.class),
             this.getBeforeCommandsWithOptions(runContext),
-            this.commands
+            runContext.render(this.commands).asList(String.class)
         );
 
         return this.commands(runContext)

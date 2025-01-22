@@ -2,6 +2,7 @@ package io.kestra.plugin.malloy;
 
 import com.google.common.collect.ImmutableMap;
 import io.kestra.core.models.executions.LogEntry;
+import io.kestra.core.models.property.Property;
 import io.kestra.core.queues.QueueFactoryInterface;
 import io.kestra.core.queues.QueueInterface;
 import io.kestra.core.runners.RunContext;
@@ -38,7 +39,7 @@ class CLITest {
         CLI bash = CLI.builder()
             .id("unit-test")
             .type(CLI.class.getName())
-            .commands(List.of("malloy-cli --help"))
+            .commands(Property.of(List.of("malloy-cli --help")))
             .build();
 
         RunContext runContext = TestsUtils.mockRunContext(runContextFactory, bash, ImmutableMap.of());
