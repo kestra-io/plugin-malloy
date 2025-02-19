@@ -89,16 +89,12 @@ public class CLI extends AbstractExecScript {
 
     @Override
     public ScriptOutput run(RunContext runContext) throws Exception {
-        List<String> commandsArgs = ScriptService.scriptCommands(
-            runContext.render(this.interpreter).asList(String.class),
-            this.getBeforeCommandsWithOptions(runContext),
-            runContext.render(this.commands).asList(String.class)
-        );
-
         return this.commands(runContext)
             .withTaskRunner(this.taskRunner)
             .withContainerImage(runContext.render(this.containerImage).as(String.class).orElseThrow())
-            .withCommands(commandsArgs)
+            .withInterpreter(this.interpreter)
+            .withBeforeCommands(Property.of((this.getBeforeCommandsWithOptions(runContext))))
+            .withCommands(this.commands)
             .run();
     }
 }
