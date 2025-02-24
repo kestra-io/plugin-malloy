@@ -93,7 +93,8 @@ public class CLI extends AbstractExecScript {
             .withTaskRunner(this.taskRunner)
             .withContainerImage(runContext.render(this.containerImage).as(String.class).orElseThrow())
             .withInterpreter(this.interpreter)
-            .withBeforeCommands(Property.of((this.getBeforeCommandsWithOptions(runContext))))
+            .withBeforeCommands(this.beforeCommands)
+            .withBeforeCommandsWithOptions(true)
             .withCommands(this.commands)
             .run();
     }
