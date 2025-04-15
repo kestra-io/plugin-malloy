@@ -25,7 +25,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Execute one or more Malloy commands from the Command Line Interface."
+    title = "Execute one or more Malloy commands."
 )
 @Plugin(examples = {
     @Example(
