@@ -75,7 +75,7 @@ public class CLI extends AbstractExecScript implements RunnableTask<ScriptOutput
 
     @Schema(title = "The task runner container image, only used if the task runner is container-based.")
     @Builder.Default
-    private Property<String> containerImage = Property.of(DEFAULT_IMAGE);
+    private Property<String> containerImage = Property.ofValue(DEFAULT_IMAGE);
 
     @Override
     protected DockerOptions injectDefaults(RunContext runContext, DockerOptions original) throws IllegalVariableEvaluationException {
