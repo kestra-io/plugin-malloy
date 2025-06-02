@@ -39,7 +39,7 @@ class CLITest {
         CLI bash = CLI.builder()
             .id("unit-test")
             .type(CLI.class.getName())
-            .commands(Property.of(List.of("malloy-cli --help")))
+            .commands(Property.ofValue(List.of("malloy-cli --help")))
             .build();
 
         RunContext runContext = TestsUtils.mockRunContext(runContextFactory, bash, ImmutableMap.of());
