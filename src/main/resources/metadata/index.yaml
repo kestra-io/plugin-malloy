@@ -1,0 +1,8 @@
+group: io.kestra.plugin.malloy
+name: "malloy"
+title: "Malloy CLI"
+description: "This sub-group of plugins contains tasks for running Malloy CLI."
+body: ""
+videos: []
+createdBy: "Kestra Core Team"
+managedBy: "Kestra Core Team"
