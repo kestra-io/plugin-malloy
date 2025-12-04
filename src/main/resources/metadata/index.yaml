@@ -1,8 +1,8 @@
 group: io.kestra.plugin.malloy
 name: "malloy"
 title: "Malloy CLI"
-description: "This sub-group of plugins contains tasks for running Malloy CLI."
-body: ""
+description: "Tasks that execute Malloy CLI queries."
+body: "Provide the Malloy model file or query, connection settings, and CLI options to run Malloy queries and capture the results or exported files inside Kestra flows."
 videos: []
 createdBy: "Kestra Core Team"
 managedBy: "Kestra Core Team"
