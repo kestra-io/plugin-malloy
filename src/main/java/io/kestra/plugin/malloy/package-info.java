@@ -1,6 +1,6 @@
 @PluginSubGroup(
     description = "This sub-group of plugins contains tasks for running Malloy CLI.",
-    categories = { PluginSubGroup.PluginCategory.TOOL }
+        categories = { PluginSubGroup.PluginCategory.DATA }
 )
 package io.kestra.plugin.malloy;
 
