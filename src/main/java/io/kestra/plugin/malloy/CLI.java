@@ -25,7 +25,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Schema(
-    title = "Execute one or more Malloy commands."
+    title = "Run Malloy CLI commands",
+    description = "Runs malloy-cli commands through the configured Task Runner; defaults to Docker with the `ghcr.io/kestra-io/malloy` image when none is provided."
 )
 @Plugin(examples = {
     @Example(
@@ -38,6 +39,8 @@ import java.util.List;
                tasks:
                  - id: run_malloy
                    type: io.kestra.plugin.malloy.CLI
+                   # malloy-cli is present when using the default Docker Task Runner image.
+                   # If you override the taskRunner with a non-container runner, ensure malloy-cli is on PATH.
                    inputFiles:
                      model.malloy: |
                        source: my_model is duckdb.table('https://huggingface.co/datasets/kestra/datasets/raw/main/csv/iris.csv')
@@ -53,6 +56,34 @@ import java.util.List;
                    commands:
                      - malloy-cli run model.malloy
                """
+    ),
+    @Example(
+        full = true,
+        title = "Run Malloy with local data and a setup step.",
+        code = """
+               id: malloy_local
+               namespace: company.team
+
+               tasks:
+                 - id: run_local
+                   type: io.kestra.plugin.malloy.CLI
+                   beforeCommands:
+                     - malloy-cli compile model.malloy
+                   inputFiles:
+                     model.malloy: |
+                       source: iris is csv('data/iris.csv')
+                       run: iris -> {
+                         group_by: species
+                         aggregate: avg_petal_length is avg(petal_length)
+                       }
+                     data/iris.csv: |
+                       sepal_length,sepal_width,petal_length,petal_width,species
+                       5.1,3.5,1.4,0.2,setosa
+                       6.2,3.4,5.4,2.3,virginica
+                       5.9,3.0,4.2,1.5,versicolor
+                   commands:
+                     - malloy-cli run model.malloy --limit 5
+               """
     )
 })
 public class CLI extends AbstractExecScript implements RunnableTask<ScriptOutput> {
@@ -60,20 +91,24 @@ public class CLI extends AbstractExecScript implements RunnableTask<ScriptOutput
     private static final String DEFAULT_IMAGE = "ghcr.io/kestra-io/malloy";
 
     @Schema(
-        title = "The commands to run."
+        title = "Malloy CLI commands",
+        description = "Commands rendered with flow variables and executed in order using the configured interpreter."
     )
     protected Property<List<String>> commands;
 
     @Schema(
-        title = "The task runner to use.",
-        description = "Task runners are provided by plugins, each have their own properties."
+        title = "Task runner",
+        description = "Runner used to execute malloy-cli; defaults to Docker unless another Task Runner is provided."
     )
     @PluginProperty
     @Builder.Default
     @Valid
     private TaskRunner<?> taskRunner = Docker.instance();
 
-    @Schema(title = "The task runner container image, only used if the task runner is container-based.")
+    @Schema(
+        title = "Container image",
+        description = "Used only with container-based Task Runners; defaults to `ghcr.io/kestra-io/malloy` when no image is set."
+    )
     @Builder.Default
     private Property<String> containerImage = Property.ofValue(DEFAULT_IMAGE);
 
