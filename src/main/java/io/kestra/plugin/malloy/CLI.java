@@ -70,19 +70,28 @@ import java.util.List;
                    beforeCommands:
                      - malloy-cli compile model.malloy
                    inputFiles:
+                     malloy.config: |
+                       {
+                         "connections": {
+                           "duckdb": { "type": "duckdb" }
+                         }
+                       }
                      model.malloy: |
-                       source: iris is csv('data/iris.csv')
+                       source: iris is duckdb.table('data/iris.csv')
                        run: iris -> {
                          group_by: species
                          aggregate: avg_petal_length is avg(petal_length)
+                         limit: 5
                        }
                      data/iris.csv: |
                        sepal_length,sepal_width,petal_length,petal_width,species
                        5.1,3.5,1.4,0.2,setosa
                        6.2,3.4,5.4,2.3,virginica
                        5.9,3.0,4.2,1.5,versicolor
+                   outputFiles:
+                     - results.json
                    commands:
-                     - malloy-cli run model.malloy --limit 5
+                     - malloy-cli run model.malloy > results.json
                """
     )
 })
