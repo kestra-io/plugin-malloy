@@ -1,5 +1,7 @@
 package io.kestra.plugin.malloy;
 
+import java.util.List;
+
 import io.kestra.core.exceptions.IllegalVariableEvaluationException;
 import io.kestra.core.models.annotations.Example;
 import io.kestra.core.models.annotations.Plugin;
@@ -12,12 +14,11 @@ import io.kestra.plugin.scripts.exec.AbstractExecScript;
 import io.kestra.plugin.scripts.exec.scripts.models.DockerOptions;
 import io.kestra.plugin.scripts.exec.scripts.models.ScriptOutput;
 import io.kestra.plugin.scripts.runner.docker.Docker;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-
-import java.util.List;
 
 @SuperBuilder
 @ToString
@@ -28,73 +29,75 @@ import java.util.List;
     title = "Run Malloy CLI commands",
     description = "Runs malloy-cli commands through the configured Task Runner; defaults to Docker with the `ghcr.io/kestra-io/malloy` image when none is provided."
 )
-@Plugin(examples = {
-    @Example(
-        full = true,
-        title = "Create a Malloy script and run the malloy-cli run command.",
-        code = """
-               id: malloy
-               namespace: company.team
+@Plugin(
+    examples = {
+        @Example(
+            full = true,
+            title = "Create a Malloy script and run the malloy-cli run command.",
+            code = """
+                id: malloy
+                namespace: company.team
 
-               tasks:
-                 - id: run_malloy
-                   type: io.kestra.plugin.malloy.CLI
-                   # malloy-cli is present when using the default Docker Task Runner image.
-                   # If you override the taskRunner with a non-container runner, ensure malloy-cli is on PATH.
-                   inputFiles:
-                     model.malloy: |
-                       source: my_model is duckdb.table('https://huggingface.co/datasets/kestra/datasets/raw/main/csv/iris.csv')
+                tasks:
+                  - id: run_malloy
+                    type: io.kestra.plugin.malloy.CLI
+                    # malloy-cli is present when using the default Docker Task Runner image.
+                    # If you override the taskRunner with a non-container runner, ensure malloy-cli is on PATH.
+                    inputFiles:
+                      model.malloy: |
+                        source: my_model is duckdb.table('https://huggingface.co/datasets/kestra/datasets/raw/main/csv/iris.csv')
 
-                       run: my_model -> {
-                           group_by: variety
-                           aggregate:
-                               avg_petal_width is avg(petal_width)
-                               avg_petal_length is avg(petal_length)
-                               avg_sepal_width is avg(sepal_width)
-                               avg_sepal_length is avg(sepal_length)
-                       }
-                   commands:
-                     - malloy-cli run model.malloy
-               """
-    ),
-    @Example(
-        full = true,
-        title = "Run Malloy with local data and a setup step.",
-        code = """
-               id: malloy_local
-               namespace: company.team
+                        run: my_model -> {
+                            group_by: variety
+                            aggregate:
+                                avg_petal_width is avg(petal_width)
+                                avg_petal_length is avg(petal_length)
+                                avg_sepal_width is avg(sepal_width)
+                                avg_sepal_length is avg(sepal_length)
+                        }
+                    commands:
+                      - malloy-cli run model.malloy
+                """
+        ),
+        @Example(
+            full = true,
+            title = "Run Malloy with local data and a setup step.",
+            code = """
+                id: malloy_local
+                namespace: company.team
 
-               tasks:
-                 - id: run_local
-                   type: io.kestra.plugin.malloy.CLI
-                   beforeCommands:
-                     - malloy-cli compile model.malloy
-                   inputFiles:
-                     malloy.config: |
-                       {
-                         "connections": {
-                           "duckdb": { "type": "duckdb" }
-                         }
-                       }
-                     model.malloy: |
-                       source: iris is duckdb.table('data/iris.csv')
-                       run: iris -> {
-                         group_by: species
-                         aggregate: avg_petal_length is avg(petal_length)
-                         limit: 5
-                       }
-                     data/iris.csv: |
-                       sepal_length,sepal_width,petal_length,petal_width,species
-                       5.1,3.5,1.4,0.2,setosa
-                       6.2,3.4,5.4,2.3,virginica
-                       5.9,3.0,4.2,1.5,versicolor
-                   outputFiles:
-                     - results.json
-                   commands:
-                     - malloy-cli run model.malloy > results.json
-               """
-    )
-})
+                tasks:
+                  - id: run_local
+                    type: io.kestra.plugin.malloy.CLI
+                    beforeCommands:
+                      - malloy-cli compile model.malloy
+                    inputFiles:
+                      malloy.config: |
+                        {
+                          "connections": {
+                            "duckdb": { "type": "duckdb" }
+                          }
+                        }
+                      model.malloy: |
+                        source: iris is duckdb.table('data/iris.csv')
+                        run: iris -> {
+                          group_by: species
+                          aggregate: avg_petal_length is avg(petal_length)
+                          limit: 5
+                        }
+                      data/iris.csv: |
+                        sepal_length,sepal_width,petal_length,petal_width,species
+                        5.1,3.5,1.4,0.2,setosa
+                        6.2,3.4,5.4,2.3,virginica
+                        5.9,3.0,4.2,1.5,versicolor
+                    outputFiles:
+                      - results.json
+                    commands:
+                      - malloy-cli run model.malloy > results.json
+                """
+        )
+    }
+)
 public class CLI extends AbstractExecScript implements RunnableTask<ScriptOutput> {
 
     private static final String DEFAULT_IMAGE = "ghcr.io/kestra-io/malloy";
