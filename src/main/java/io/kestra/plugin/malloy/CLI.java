@@ -106,13 +106,14 @@ public class CLI extends AbstractExecScript implements RunnableTask<ScriptOutput
         title = "Malloy CLI commands",
         description = "Commands rendered with flow variables and executed in order using the configured interpreter."
     )
+    @PluginProperty(group = "main")
     protected Property<List<String>> commands;
 
     @Schema(
         title = "Task runner",
         description = "Runner used to execute malloy-cli; defaults to Docker unless another Task Runner is provided."
     )
-    @PluginProperty
+    @PluginProperty(group = "execution")
     @Builder.Default
     @Valid
     private TaskRunner<?> taskRunner = Docker.instance();
@@ -122,6 +123,7 @@ public class CLI extends AbstractExecScript implements RunnableTask<ScriptOutput
         description = "Used only with container-based Task Runners; defaults to `ghcr.io/kestra-io/malloy` when no image is set."
     )
     @Builder.Default
+    @PluginProperty(group = "execution")
     private Property<String> containerImage = Property.ofValue(DEFAULT_IMAGE);
 
     @Override
